@@ -1,34 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-
-namespace test_C
+namespace DungeonGame
 {
     public interface IMonster
     {
-       
+
 
     }
-    abstract public class Charactor
+    abstract public class Character
     {
-        public  int row_Location;
+        public int row_Location;
         public int col_Location;
 
         public int lifeCount;
         public int attackDamage;
         public string name;
-        public Charactor() {}
-        
+        public Character() { }
+
         public (int, int) Current_Location(char[,] map, char c)
         {
-            
+
             for (int i = 0; i < map.GetLength(0); i++)
             {
                 for (int j = 0; j < map.GetLength(1); j++)
@@ -47,10 +42,11 @@ namespace test_C
         abstract public bool Damaged(int damage);
         abstract public void Died();
     }
-    public class Player : Charactor
+    public class Player : Character
     {
-        public bool P_isDead = false; 
-        public Player() {
+        public bool P_isDead = false;
+        public Player()
+        {
             lifeCount = 30;
             attackDamage = 50;
         }
@@ -59,7 +55,7 @@ namespace test_C
             map[row, col] = 'P';
             row_Location = row;
             col_Location = col;
-            
+
         }
         override public void Died()
         {
@@ -85,15 +81,15 @@ namespace test_C
                             monsterGroup.RemoveAt(i);
                             map[x, y] = ' ';
                         }
-                        
+
                     }
                 }
                 //map[x + xamount, y + yamount] = ' ';
                 //map[x, y] = 'P';
                 //몬스터 인덱스 제거
-                
 
-                return 3; 
+
+                return 3;
             }
             else if (map[x, y] == 'D')
             {
@@ -129,14 +125,14 @@ namespace test_C
             return monster.Damaged(attackDamage);
         }
     }
-    public class Monster : Charactor, IMonster
+    public class Monster : Character, IMonster
     {
         static Random rand = new Random();
 
         private int chasingRange = 10;
         private int attackRange = 1;
         private int percent = 50;
-        public Monster() {}
+        public Monster() { }
 
         override public bool Damaged(int damage)
         {
@@ -181,14 +177,14 @@ namespace test_C
             if (turncount % 2 == 0)
             {
                 //공격턴
-                
+
                 M_Attack(map, PlayerLoc, player);
             }
             else if (turncount % 2 == 1)
             {
 
                 //움직이는 턴
-                
+
                 if (Check_Player(map, PlayerLoc, chasingRange))
                 {
                     M_Move_Player(map, PlayerLoc);
@@ -198,7 +194,7 @@ namespace test_C
                     M_Random_Move(map);
                 }
             }
-            
+
         }//턴에 따라 Attack OR Move
         private void M_Attack(char[,] map, (int, int) PlayerLoc, Player player)
         {
@@ -210,12 +206,12 @@ namespace test_C
 
                 if (kk == 1) { player.Damaged(attackDamage); }
                 else { Console.WriteLine("Player : 공격 회피!!"); }
-                
+
             }
         }
         private void M_Random_Move(char[,] map)//상하좌우 랜덤위치 이동
         {
-            
+
             int a = rand.Next(1, 5);
             if (a == 1)
             {
@@ -224,7 +220,7 @@ namespace test_C
                 {
                     map[row_Location, col_Location] = ' ';
                     row_Location++;
-                    map[row_Location, col_Location] = 'M';   
+                    map[row_Location, col_Location] = 'M';
                 }
             }
             else if (a == 2)
@@ -249,7 +245,7 @@ namespace test_C
             }
             else if (a == 4)
             {
-                if (map[row_Location, col_Location -1] != ' ') { }
+                if (map[row_Location, col_Location - 1] != ' ') { }
                 else
                 {
                     map[row_Location, col_Location] = ' ';
@@ -258,15 +254,15 @@ namespace test_C
                 }
             }
             else { }
-           
+
         }
 
         private void M_Move_Player(char[,] map, (int, int) playerLoc)
         {
-            
-            if(playerLoc.Item1 > row_Location)
+
+            if (playerLoc.Item1 > row_Location)
             {
-                if (map[row_Location +1, col_Location] != ' ') { }
+                if (map[row_Location + 1, col_Location] != ' ') { }
                 else
                 {
                     map[row_Location, col_Location] = ' ';
@@ -274,9 +270,9 @@ namespace test_C
                     map[row_Location, col_Location] = 'M';
                 }
             }
-            else if(playerLoc.Item1 < row_Location)
+            else if (playerLoc.Item1 < row_Location)
             {
-                if (map[row_Location -1, col_Location] != ' ') { }
+                if (map[row_Location - 1, col_Location] != ' ') { }
                 else
                 {
                     map[row_Location, col_Location] = ' ';
@@ -285,9 +281,9 @@ namespace test_C
                 }
             }
 
-            if(playerLoc.Item2 > col_Location)
+            if (playerLoc.Item2 > col_Location)
             {
-                if (map[row_Location, col_Location +1] != ' ') { }
+                if (map[row_Location, col_Location + 1] != ' ') { }
                 else
                 {
                     map[row_Location, col_Location] = ' ';
@@ -295,9 +291,9 @@ namespace test_C
                     map[row_Location, col_Location] = 'M';
                 }
             }
-            else if(playerLoc.Item2 < col_Location)
+            else if (playerLoc.Item2 < col_Location)
             {
-                if (map[row_Location, col_Location -1] != ' ') { }
+                if (map[row_Location, col_Location - 1] != ' ') { }
                 else
                 {
                     map[row_Location, col_Location] = ' ';
@@ -311,7 +307,7 @@ namespace test_C
         {
             double dx = row_Location - playerLoc.Item1;
             double dy = col_Location - playerLoc.Item2;
-            
+
             if (Math.Sqrt(Math.Pow(dx, 2) + Math.Pow(dy, 2)) <= chasingRange)
             {
                 return true;
@@ -323,7 +319,7 @@ namespace test_C
     {
         public List<char[,]> totalMap = new List<char[,]>();
         public int mapcount = 0;
-        
+
         public char[,] CreateMap(string Level, List<Monster> monsterG, Player player)
         {
             //랜덤 크기의 맵 생성
@@ -378,7 +374,7 @@ namespace test_C
             //맵 내부 벽 랜덤 스폰
             Wall_Generator(map, wallCount);
 
-           
+
             //플레이어 고정 위치 스폰
 
             player.Spawn(1, 1, map);
@@ -404,7 +400,7 @@ namespace test_C
                 Monster newM = new Monster();
                 newM.Spawn(ranR, ranC, map);
                 monsterG.Add(newM);
-                
+
             }
 
             return map;
@@ -511,16 +507,16 @@ namespace test_C
                     break;
                 }
             }
-            
+
 
             Console.Write("플레이 할 스테이지 수 입력: ");
             stage_count = int.Parse(Console.ReadLine());
         }
         public void PlayGame()
         {
-            
+
             SetGame();
-            
+
             char[,] Map2 = mapManager.CreateMap(Level, monsterGroup, player);
             mapManager.totalMap.Add(Map2);
 
@@ -528,9 +524,9 @@ namespace test_C
 
             while (true)
             {
-                
+
                 int a = Input_And_UpdateMap(Map2);
-                
+
                 if (a == 1)
                 {
                     mapManager.mapcount++;
@@ -541,7 +537,7 @@ namespace test_C
                     }
                     if (mapManager.mapcount >= mapManager.totalMap.Count())
                     {
-                        
+
                         Map2 = mapManager.CreateMap(Level, monsterGroup, player);
                         mapManager.totalMap.Add(Map2);
                         mapManager.PrintMap(Map2);
@@ -568,7 +564,8 @@ namespace test_C
         }
         public int Input_And_UpdateMap(char[,] map)
         {
-            for(int i=0; i<2; i++) { Console.WriteLine(); }
+            for (int i = 0; i < 2; i++) { Console.WriteLine(); }
+
             turnCount++;
             Console.WriteLine("현재 턴 :" + turnCount);
             Console.Write("input W,A,S,D: ");
@@ -594,7 +591,7 @@ namespace test_C
             }
 
             //몬스터 행동
-            for(int i=0; i< monsterGroup.Count; i++)
+            for (int i = 0; i < monsterGroup.Count; i++)
             {
                 monsterGroup[i].Attack_Move_Monster(map, turnCount, player);
             }
@@ -607,7 +604,7 @@ namespace test_C
             }
             else if (moveResult == 3)
             {
-                
+
                 if (moster.Count_M(monsterGroup) == 0)
                 {
                     mapManager.Door_Generate(map);
@@ -622,7 +619,7 @@ namespace test_C
             }
             else if (moveResult == 4)
             {
-                mapManager.PrintMap(map); 
+                mapManager.PrintMap(map);
             }
 
             if (moveResult == 1 || moveResult == 2)
@@ -642,7 +639,7 @@ namespace test_C
         static void Main(string[] args)
         {
             Console.CursorVisible = false;
-            
+
 
             DungeonGame a = new DungeonGame();
             a.PlayGame();
