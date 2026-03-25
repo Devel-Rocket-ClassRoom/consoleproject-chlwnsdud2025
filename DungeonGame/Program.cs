@@ -25,7 +25,8 @@ namespace DungeonGame
         Back,
         Monster,
         Wall,
-        Move
+        Move,
+        None
     }
     abstract public class Character
     {
@@ -77,11 +78,11 @@ namespace DungeonGame
             Console.WriteLine("Player 사망!!! - GMAE_OVER");
             P_isDead = true;
         }
-        public int Player_Move(char[,] map, int xamount, int yamount, int x, int y, List<Monster> monsterGroup)
+        public Move_Result Player_Move(char[,] map, int xamount, int yamount, int x, int y, List<Monster> monsterGroup)
         {
             if (map[x, y] == '#')
             {
-                return 0; // 벽에 막힘
+                return Move_Result.Wall; // 벽에 막힘
             }
             else if (map[x, y] == 'M')
             {
@@ -104,21 +105,21 @@ namespace DungeonGame
                 //몬스터 인덱스 제거
 
 
-                return 3;
+                return Move_Result.Monster;
             }
             else if (map[x, y] == 'D')
             {
-                return 1; // 다음 스테이지 문
+                return Move_Result.Door; // 다음 스테이지 문
             }
             else if (map[x, y] == 'O')
             {
-                return 2; // 이전 스테이지 문
+                return Move_Result.Back; // 이전 스테이지 문
             }
             else
             {
                 map[x + xamount, y + yamount] = ' ';
                 map[x, y] = 'P';
-                return 4; // 일반 이동 성공
+                return Move_Result.Move; // 일반 이동 성공
             }
         }
         override public bool Damaged(int damage)
@@ -559,9 +560,9 @@ namespace DungeonGame
             while (true)
             {
 
-                int a = Input_And_UpdateMap(Map2);
+                Move_Result a = Input_And_UpdateMap(Map2);
 
-                if (a == 1)
+                if (a == Move_Result.Door)
                 {
                     mapManager.mapcount++;
                     if (mapManager.mapcount >= stage_count)
@@ -582,7 +583,7 @@ namespace DungeonGame
                         mapManager.PrintMap(Map2);
                     }
                 }
-                else if (a == 2)
+                else if (a == Move_Result.Back)
                 {
                     mapManager.mapcount -= 1;
                     Map2 = mapManager.totalMap[mapManager.mapcount];
@@ -596,7 +597,7 @@ namespace DungeonGame
 
             }
         }
-        public int Input_And_UpdateMap(char[,] map)
+        public Move_Result Input_And_UpdateMap(char[,] map)
         {
             for (int i = 0; i < 2; i++) { Console.WriteLine(); }
 
@@ -610,7 +611,7 @@ namespace DungeonGame
             int x = PlayerPos.Item1;
             int y = PlayerPos.Item2;
 
-            int moveResult = 0;
+            Move_Result moveResult = Move_Result.Move;
 
             //플레이어 이동
             switch (input.ToUpper())
@@ -621,7 +622,8 @@ namespace DungeonGame
                 case "D": moveResult = player.Player_Move(map, 0, -1, x, y + 1, monsterGroup); break;
                 default:
                     Console.WriteLine("잘못된 입력입니다.");
-                    return 0;
+                    return Move_Result.None
+                        ;
             }
 
             //몬스터 행동
@@ -631,12 +633,12 @@ namespace DungeonGame
             }
 
             //업데이트
-            if (moveResult == 0)
+            if (moveResult == Move_Result.Wall)
             {
                 mapManager.PrintMap(map);
                 Console.WriteLine("이동할 수 없습니다.");
             }
-            else if (moveResult == 3)
+            else if (moveResult == Move_Result.Monster)
             {
 
                 if (moster.Count_Monster(monsterGroup) == 0)
@@ -651,12 +653,12 @@ namespace DungeonGame
                     Console.WriteLine("남은 적 수 : " + moster.Count_Monster(monsterGroup));
                 }
             }
-            else if (moveResult == 4)
+            else if (moveResult == Move_Result.Move)
             {
                 mapManager.PrintMap(map);
             }
 
-            if (moveResult == 1 || moveResult == 2)
+            if (moveResult == Move_Result.Door || moveResult == Move_Result.Back)
             {
                 return moveResult;
             }
@@ -665,7 +667,7 @@ namespace DungeonGame
             if (turnCount % 3 == 2) { Console.WriteLine("다음턴은 몬스터 공격 턴!"); }
             else { Console.WriteLine("다음턴은 몬스터 이동 턴!"); }
 
-            return 0;
+            return Move_Result.None;
         }
 
 
