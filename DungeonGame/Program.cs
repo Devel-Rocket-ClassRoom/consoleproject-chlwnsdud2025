@@ -513,13 +513,8 @@ namespace DungeonGame
         Player player = new Player();
         List<Monster> monsterGroup = new List<Monster>();
         Monster moster = new Monster();
-
+        SaveLoadJson JsonMap = new SaveLoadJson();
         public List<List<char>> list { get; set; }
-       
-
-
-
-
         public DungeonGame()
         {
 
@@ -554,6 +549,8 @@ namespace DungeonGame
 
             char[,] Map2 = mapManager.CreateMap(Level, monsterGroup, player);
             mapManager.totalMap.Add(Map2);
+            JsonMap.test_map = JsonMap.ConvertMap1(Map2);
+            JsonMap.SaveGameData(JsonMap.test_map);
 
             mapManager.PrintMap(Map2);
 
@@ -575,6 +572,10 @@ namespace DungeonGame
 
                         Map2 = mapManager.CreateMap(Level, monsterGroup, player);
                         mapManager.totalMap.Add(Map2);
+
+                        JsonMap.test_map = JsonMap.ConvertMap1(Map2);
+                        JsonMap.SaveGameData(JsonMap.test_map);
+
                         mapManager.PrintMap(Map2);
                     }
                     else
@@ -710,27 +711,29 @@ namespace DungeonGame
 
     public class SaveLoadJson
     {
-        List<List<char>> test_map;
+
+        public List<List<char>> test_map;
         public char[,] map = new char[20,20];
+        GameData gdata = new GameData();
         // 2차원 맵을 List로 바꾸는 함수
         public void MapGenerate()
         {
-            for (int i = 0; i < map.GetLength(0); i++)
-            {
-                for (int j = 0; j < map.GetLength(1); j++)
-                {
-                    if (i == 0 || i == map.GetLength(0) - 1 || j == 0 || j == map.GetLength(1) - 1)
-                    {
-                        map[i, j] = '#';
-                    }
-                    else
-                    {
-                        map[i, j] = ' ';
-                    }
-                }
+            //for (int i = 0; i < map.GetLength(0); i++)
+            //{
+            //    for (int j = 0; j < map.GetLength(1); j++)
+            //    {
+            //        if (i == 0 || i == map.GetLength(0) - 1 || j == 0 || j == map.GetLength(1) - 1)
+            //        {
+            //            map[i, j] = '#';
+            //        }
+            //        else
+            //        {
+            //            map[i, j] = ' ';
+            //        }
+            //    }
 
-            }
-            test_map = ConvertMap1(map);
+            //}
+            //test_map = ConvertMap1(map);
         }
         public List<List<char>> ConvertMap1(char[,] map)
         {
@@ -768,10 +771,10 @@ namespace DungeonGame
         }
 
         // GameData를 Json으로 저장하는 테스트 함수
-        public void SaveGameData()
+        public void SaveGameData(List<List<char>> testMap)
         {
-            GameData gdata = new GameData("Blue dragon", 5, 10, test_map);
-
+           
+            gdata.AA(testMap);
             // 저장할 파일 경로
             string folderPath = "./GameData";
             string filePath = Path.Combine(folderPath, "data.json");  // 폴더와 파일 이름 합치기
@@ -781,7 +784,7 @@ namespace DungeonGame
                 Directory.CreateDirectory(folderPath);
 
             // 직렬화
-            string result = JsonSerializer.Serialize(gdata, new JsonSerializerOptions { WriteIndented = true });
+            string result = JsonSerializer.Serialize(gdata, new JsonSerializerOptions { WriteIndented = false });
             File.WriteAllText(filePath, result);
 
             // 테스트 출력
@@ -811,19 +814,19 @@ namespace DungeonGame
         public class GameData
         {
             // Json에 포함
-            [JsonInclude] private string stageName;
-            [JsonInclude] private int dungeonCount;
-            [JsonInclude] private List<List<char>> testMap;
+            private List<List<char>> testMap;
+            [JsonInclude] private List<List<List<char>>> mapList = new List<List<List<char>>>();
 
-            // 포함하지 않음
-            [JsonIgnore] public int Count { get; set; }
-
-            public GameData(string stageName, int dungeonCount, int count, List<List<char>> testMap)
+            public GameData()
             {
-                this.stageName = stageName;
-                this.dungeonCount = dungeonCount;
-                this.Count = count;
+               
+                
+                
+            }
+            public void AA(List<List<char>> testMap)
+            {
                 this.testMap = testMap;
+                this.mapList.Add(this.testMap);
             }
         }
     }
@@ -831,10 +834,10 @@ namespace DungeonGame
     {
         static void Main(string[] args)
         {
-            //Console.CursorVisible = false;
+            Console.CursorVisible = false;
 
-            //DungeonGame a = new DungeonGame();
-            //a.PlayGame();
+            DungeonGame a = new DungeonGame();
+            a.PlayGame();
 
 
 
@@ -865,10 +868,10 @@ namespace DungeonGame
             Console.WriteLine("읽기 성공 : " + mm.name);
         */
             
-            SaveLoadJson a = new SaveLoadJson();
-            a.MapGenerate();
-            a.SaveGameData();
-            a.LoadGameData();
+            //SaveLoadJson a = new SaveLoadJson();
+            //a.MapGenerate();
+            //a.SaveGameData();
+            //a.LoadGameData();
 
 
 
