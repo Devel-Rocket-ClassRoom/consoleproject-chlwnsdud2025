@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Text.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,7 @@ namespace DungeonGame
         public int lifeCount;
         public int attackDamage;
         public string name;
-        public Character() { }
+        
 
         public (int, int) Current_Location(char[,] map, char c)
         {
@@ -34,7 +35,6 @@ namespace DungeonGame
                         col_Location = j;
                     }
                 }
-
             }
             return (row_Location, col_Location);
         }
