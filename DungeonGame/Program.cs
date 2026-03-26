@@ -572,10 +572,13 @@ namespace DungeonGame
 
             turnCount++;
             Console.WriteLine("현재 턴 :" + turnCount);
+
             Console.Write("input W,A,S,D: ");
             string input = Console.ReadLine();
+
             Console.Clear();
             Console.SetCursorPosition(0, 0);
+
             var PlayerPos = player.Current_Location(map, 'P');
             int x = PlayerPos.Item1;
             int y = PlayerPos.Item2;
