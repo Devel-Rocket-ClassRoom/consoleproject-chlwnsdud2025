@@ -509,6 +509,7 @@ namespace DungeonGame
         List<Monster> monsterGroup = new List<Monster>();
         Monster moster = new Monster();
         SaveLoadJson JsonMap = new SaveLoadJson();
+
         public List<List<char>> list { get; set; }
         public DungeonGame()
         {
@@ -750,7 +751,7 @@ namespace DungeonGame
             File.WriteAllText(filePath, result);
 
             // 테스트 출력
-            Console.WriteLine(result);
+            //Console.WriteLine(result);
         }
 
         // Json으로 저장된 GameData를 읽는 테스트 함수
