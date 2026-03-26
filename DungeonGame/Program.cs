@@ -343,8 +343,6 @@ namespace DungeonGame
             attackDamage = 10;
             mark = 'B';
         }
-
-       
     }
     public class MapController
     {
@@ -404,9 +402,9 @@ namespace DungeonGame
             }
 
 
+            //빈 맵 생성
             char[,] map = new char[mapsizer, mapsizec];
             NewMap(map);
-
 
             //몬스터 랜덤 위치 스폰
             MonsterSpawn(map, monsterG, stage_count, enemyCount, mapsizer, mapsizec);
@@ -433,7 +431,6 @@ namespace DungeonGame
                 newB.Spawn(map.GetLength(0) -2, map.GetLength(1) - 2, map);
                 monsterG.Add(newB);
             }
-
 
             for (int i = 0; i < enemyCount; i++)
             {
@@ -491,13 +488,11 @@ namespace DungeonGame
                             map[a, b + 1] = '#';
                             map[a + 1, b] = '#';
                             break;
-
-                    }
-                   
+                    }    
                 }
                 else
                 {
-                    count--;
+                    count--; // 벽 생성 조건에 맞지 않을 시 다시 반복
                 }
         }
 
@@ -595,7 +590,9 @@ namespace DungeonGame
         }
         public Move_Result Input_And_UpdateMap(ref char[,] map)
         {
-            for (int i = 0; i < 2; i++) { Console.WriteLine(); }
+            for (int i = 0; i < 2; i++) { 
+                Console.WriteLine();  // 공백 생성
+            }
 
             turnCount++;
             Console.WriteLine("현재 턴 :" + turnCount);
@@ -656,8 +653,7 @@ namespace DungeonGame
             {
                 mapManager.PrintMap(map);
             }
-
-            if (moveResult == Move_Result.Door) // 출구
+            else if (moveResult == Move_Result.Door) // 출구
             {
                 mapManager.mapcount++;
                 if (mapManager.mapcount >= stage_count) // 마지막 스테이지
